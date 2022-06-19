@@ -3,9 +3,9 @@
 
 #include <stdio.h>
 #include <stdbool.h> 
-#include <stdlib.h> 
-#include "random.h"
+#include <stdlib.h>
 #include "memoryGame.h"
+#include "random.h"
 
 #define LETTERS     26 /// total de letras maiúscula
 
@@ -63,7 +63,12 @@ bool between( int v, int inf, int sup ){   return v>=inf && v<=sup; }
 
 /// gera para player board um jogo com as letras e com os indices.
 /// chamar as funções de Random.c para gerar esses aleatórios
-void game_generate( Game *player )
-{
-    ////// FALTA IMPLEMENTAR
+void game_generate( Game *player ) {
+
+  Random letter=  newRandomInterval(player->tab.nL, player->tab.nC);
+  addRandomInterval(letter, player->tab.nL, player->tab.nC);
+  Random idx = newRandomInterval(player->tab.nL, player->tab.nC);
+  int i = getRandom(&idx);
+  int li = i/player->tab.nL;
+  int col = i%player->tab.nC;
 }

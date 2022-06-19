@@ -91,9 +91,7 @@ void buttonLeft( int meX, int meY )
   int vTAB_MAX_Y =((INIT_YQ + (player.tab.nL*(SIDE + DELTA)-DELTA)));///e YY
  
   if( !between(meX,INIT_XQ, vTAB_MAX_X) || !between(meY, INIT_YQ, vTAB_MAX_Y) ) return; 
-  
-  
-  /////// FALTA IMPLEMENTAR 
+  buttonLeftClick(meX, meY);
 }
 
 /**
@@ -102,9 +100,8 @@ void buttonLeft( int meX, int meY )
  * Para o 1ºclick e 2ºclick chama  game_play( );
  */
 void buttonLeftClick( int x, int y )
-{ 
-   
-  /////// FALTA IMPLEMENTAR 
+{
+  game_play(&player, x, y, player.first);
 }
 
 // Mostra a letra na respetiva célula
@@ -122,19 +119,32 @@ void writeCell(Game *player, int lin, int col, char letter) {
  * forem iguais serão marcadas como ocupadas com busy=1, caso contrario serão apagadas. 
  * Verificado se o jogo terminou com a chamada game_end_board( player )
  */
-void game_play( Game *player, int line, int col, bool first )
-{ 
-  /////// FALTA IMPLEMENTAR 
-
+void game_play( Game *player, int line, int col, bool first ) {
+  if( game_end_board(player) == true) return;
+  if ( first ==  true) {
+    writeCell(player, line, col, player->tab.board[line][col].letter);
+  } else {
+    writeCell(player, line, col, player->tab.board[line][col].letter);
+    if (player->letter1 == player->letter2) {
+      player->tab.board[line][col].busy = 1;
+    } else {
+      msgGraphic(line, col, c_dgray, player->tab.board[line][col].letter, c_orange, MEDIUM_FONT);
+    }
+  }
 } 
 
-/**
+/**,
  * retorna true se o tabuleiro estiver todas as letras ocupadas,
  * caso contrario retorna false
  */
 bool game_end_board( Game *player ){
-  /////// FALTA IMPLEMENTAR
-  
+  int li = player->tab.nL;
+  int col = player->tab.nC;
+  for(int i = 0; li * col > i; i++) {
+    if(player->tab.board[li][col].busy == 0) {
+      return false;
+    }
+  }
   return true;
 }
 
@@ -156,13 +166,12 @@ void executeChronometer()
   
   chronometer(&t);                    /// contagem dos segundos, minutos e horas
   chronometerGraph(TIME_X,TIME_Y, &t);/// afixa horas,minutos,segundos na janela grafica  
- 
- //
   if( player.paused ){
 	  player.ct++;    ///começa a contagem do tempo de pausa
-    
-	  /////// FALTA IMPLEMENTAR
-
+    int TAB_LETTER_X[4]={0, 8,10,20}; /// SMALL_FONT,MEDIUM_FONT,LARGE_FONT, indices 1,2,3
+    int TAB_LETTER_Y[4]={0,10,16,26};
+    char c[10];
+    graph_rect(TIME_X, TIME_Y, TAB_LETTER_X[LARGE_FONT]*strlen(c), -TAB_LETTER_Y[3], c_gray, true);
   }
 }
 
@@ -201,8 +210,6 @@ void chronometerGraph(int x, int y, const Chronometer *t )
   sprintf(time,"%02d:%02d:%02d", t->hours, t->minutes, t->seconds);  
   msgGraphic( x, y, c_blue, time, c_white, MEDIUM_FONT );/// "apaga" e escrever texto
 }  
-
-
 /**
  * faz actualização do cronometro na variavel t do tipo Tempo
  */

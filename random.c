@@ -6,19 +6,47 @@
 // retornando um Random com os campos preenchidos
 Random newRandomInterval(int min, int max) {
 	Random r;
-	r.dimValues = 0;
-	for(int i = 0; i <= MAXRANDOM; i++) {
-		r.values[i] = getRandomNumber(min, max);		
+	for(int j = 0; j <= MAXRANDOM -1; j++) {
+		r.values[j] = j;
 	}
+	int count = (min * max) / 2;
+	int arrayChangebleSize = MAXRANDOM;
+	int trueArray[count];
+	for (int i = 0; i <= count; i++) {
+		int arrayIndexRandNum = getRandomNumber();
+		trueArray[i] = r.values[arrayIndexRandNum];
+		for (int j = 0; j < arrayChangebleSize -1; j++) {  
+            r.values[j] = r.values[j+1];
+        }
+	}
+	for (int i = 0; trueArray[i] != NULL; i++) {
+		r.values[i] = trueArray[i];
+	}
+	r.dimValues = MAXRANDOM - count;
 	return r;
 }
-
 // Adiciona um novo intervalo de inteiros para gerar numeros aleatórios ao
 // Random r passado em parametro, sendo este retornado já actualizado. 
 Random addRandomInterval(Random r, int min, int max) {
-	for(int i = 0; i <= MAXRANDOM; i++) {
-		r.values[i] = getRandomNumber(min, max);		
-	}	
+
+	int count = (min * max) / 2;
+	
+	for(int j = 0; j <= MAXRANDOM; j++) {
+		r.values[j] = j;
+	}
+	int arrayChangebleSize = MAXRANDOM - count;
+	int trueArray[count];
+	for (int i = 0; i <= count; i++) {
+		int arrayIndexRandNum = getRandomNumber();
+		trueArray[i] = r.values[arrayIndexRandNum];
+		for (int j = 0; j < arrayChangebleSize -1; j++) {  
+            r.values[j] = r.values[j+1];
+        }  
+	}
+	for (int i = count; trueArray[i] != NULL; i++) {
+		r.values[i] = trueArray[i];
+	}
+	r.dimValues = r.dimValues - count;
 	return r;
 }
 
@@ -26,26 +54,23 @@ Random addRandomInterval(Random r, int min, int max) {
 // actualiza o values, substituindo este pelo ultimo. Caso não exista nenhum
 // retorna -1
 int getRandom( Random *r ) {
-	int v=0;
-	int i = getRandomNumber(0, MAXRANDOM);
-	if ( r->values[i] == 0 ) {
-		v = -1;
-	} else {
-		v = r->values[i];
-		r->values[i] = v;
-	}
+
+	int j = rand() % r->dimValues;
+
+	int v= r->values[j];
+	r->values[j] = r->values[--r->dimValues];
 	return v;	
 }
 
 
-int getRandomNumber(int min, int max) {
+int getRandomNumber() {
 	int low = 0, hi = 0;
-	if (min < max) {
-		low = min;
-		hi = max;
+	if (0 < MAXRANDOM) {
+		low = 0;
+		hi = MAXRANDOM;
 	} else {
-		low = max;
-		hi = min;
+		low = MAXRANDOM;
+		hi = 0;
 	}
 	int result = (rand() % (hi - low)) + low;
 	return result;
